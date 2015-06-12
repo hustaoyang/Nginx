@@ -1,19 +1,18 @@
-  
 #include <ngx_config.h>  
 #include <ngx_core.h>  
 #include <ngx_http.h>  
   
 static ngx_int_t   
-ngx_http_mytest2_handler(ngx_http_request_t *r);  
+ngx_http_mytest1_handler(ngx_http_request_t *r);  
   
 static char *   
-ngx_http_mytest2(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);  
+ngx_http_mytest1(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);  
   
 static void*  
-ngx_http_mytest2_create_loc_conf(ngx_conf_t *cf);  
+ngx_http_mytest1_create_loc_conf(ngx_conf_t *cf);  
   
 static char*  
-ngx_http_mytest2_merge_loc_conf(ngx_conf_t *cf,void *parent,void *child);  
+ngx_http_mytest1_merge_loc_conf(ngx_conf_t *cf,void *parent,void *child);  
   
 //存储配置项参数的结构体  
 typedef struct{  
@@ -31,17 +30,17 @@ typedef struct{
         ngx_uint_t arg_bitmask;  
         ngx_uint_t arg_access;  
         ngx_path_t* arg_path;  
-}ngx_http_mytest2_loc_conf_t;  
+}ngx_http_mytest1_loc_conf_t;  
   
 //设置配置项的解析方式  
-static ngx_command_t ngx_http_mytest2_commands[] = {  
+static ngx_command_t ngx_http_mytest1_commands[] = {  
         {  
                 //test_str配置项  
                 ngx_string("test_str"),  
         NGX_HTTP_LOC_CONF|NGX_HTTP_LMT_CONF|NGX_CONF_TAKE1,  
         ngx_conf_set_str_slot,//预设的配置项解析方法  
                 NGX_HTTP_LOC_CONF_OFFSET,  
-                offsetof(ngx_http_mytest2_loc_conf_t,arg_str),  
+                offsetof(ngx_http_mytest1_loc_conf_t,arg_str),  
                 NULL  
         },  
         {  
@@ -50,7 +49,7 @@ static ngx_command_t ngx_http_mytest2_commands[] = {
         NGX_HTTP_LOC_CONF|NGX_HTTP_LMT_CONF|NGX_CONF_TAKE1,  
                 ngx_conf_set_flag_slot,//预设的配置项解析方法  
         NGX_HTTP_LOC_CONF_OFFSET,  
-                offsetof(ngx_http_mytest2_loc_conf_t,arg_flag),  
+                offsetof(ngx_http_mytest1_loc_conf_t,arg_flag),  
                 NULL  
         },  
         {  
@@ -59,7 +58,7 @@ static ngx_command_t ngx_http_mytest2_commands[] = {
         NGX_HTTP_LOC_CONF|NGX_HTTP_LMT_CONF|NGX_CONF_TAKE1,  
                 ngx_conf_set_num_slot,//预设的配置项解析方法  
         NGX_HTTP_LOC_CONF_OFFSET,  
-                offsetof(ngx_http_mytest2_loc_conf_t,arg_num),  
+                offsetof(ngx_http_mytest1_loc_conf_t,arg_num),  
                 NULL  
         },  
         {  
@@ -68,14 +67,14 @@ static ngx_command_t ngx_http_mytest2_commands[] = {
         NGX_HTTP_LOC_CONF|NGX_HTTP_LMT_CONF|NGX_CONF_TAKE1,  
                 ngx_conf_set_size_slot,//预设的配置项解析方法  
         NGX_HTTP_LOC_CONF_OFFSET,  
-                offsetof(ngx_http_mytest2_loc_conf_t,arg_size),  
+                offsetof(ngx_http_mytest1_loc_conf_t,arg_size),  
                 NULL  
         },  
         {  
-                //mytest配置项  
-                ngx_string("mytest"),  
+                //mytest1配置项  
+                ngx_string("mytest1"),  
         NGX_HTTP_LOC_CONF|NGX_HTTP_LMT_CONF|NGX_CONF_NOARGS,  
-        ngx_http_mytest2,  
+        ngx_http_mytest1,  
                 NGX_HTTP_LOC_CONF_OFFSET,  
                 0,  
                 NULL  
@@ -84,22 +83,22 @@ static ngx_command_t ngx_http_mytest2_commands[] = {
 };  
   
 //模块上下文定义  
-static ngx_http_module_t ngx_http_mytest2_module_ctx = {  
+static ngx_http_module_t ngx_http_mytest1_module_ctx = {  
     NULL,  
     NULL,  
     NULL,  
     NULL,  
     NULL,  
     NULL,  
-    ngx_http_mytest2_create_loc_conf,//创建数据结构存储loc级别的配置项的回调方法  
-    ngx_http_mytest2_merge_loc_conf//合并loc级别的配置项  
+    ngx_http_mytest1_create_loc_conf,//创建数据结构存储loc级别的配置项的回调方法  
+    ngx_http_mytest1_merge_loc_conf//合并loc级别的配置项  
 };  
   
 //模块定义  
-ngx_module_t ngx_http_mytest2_module = {  
+ngx_module_t ngx_http_mytest1_module = {  
     NGX_MODULE_V1,  
-    &ngx_http_mytest2_module_ctx,  
-    ngx_http_mytest2_commands,  
+    &ngx_http_mytest1_module_ctx,  
+    ngx_http_mytest1_commands,  
     NGX_HTTP_MODULE,  
     NULL,  
     NULL,  
@@ -107,28 +106,28 @@ ngx_module_t ngx_http_mytest2_module = {
     NULL,  
     NULL,  
     NULL,  
-        NULL,  
+    NULL,  
     NGX_MODULE_V1_PADDING  
 };  
   
 //模块的回调方法  
 static char *   
-ngx_http_mytest2(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)  
+ngx_http_mytest1(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)  
 {  
     ngx_http_core_loc_conf_t *clcf;  
   
     clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);  
-    clcf->handler = ngx_http_mytest2_handler;  
+    clcf->handler = ngx_http_mytest1_handler;  
         //ngx_conf_set_str_slot(cf,cmd,conf);//预设的配置项处理方法  
   
     return NGX_CONF_OK;  
 }  
   
 //模块真正完成处理工作的handler  
-static ngx_int_t ngx_http_mytest2_handler(ngx_http_request_t *r)  
+static ngx_int_t ngx_http_mytest1_handler(ngx_http_request_t *r)  
 {  
-        ngx_http_mytest2_loc_conf_t *elcf;//存储配置项参数的结构体  
-        elcf = ngx_http_get_module_loc_conf(r,ngx_http_mytest2_module);  
+        ngx_http_mytest1_loc_conf_t *elcf;//存储配置项参数的结构体  
+        elcf = ngx_http_get_module_loc_conf(r,ngx_http_mytest1_module);  
   
     if (!(r->method & (NGX_HTTP_GET | NGX_HTTP_HEAD | NGX_HTTP_POST))) {  
         return NGX_HTTP_NOT_ALLOWED;  
@@ -139,7 +138,7 @@ static ngx_int_t ngx_http_mytest2_handler(ngx_http_request_t *r)
         return rc;  
     }  
   
-    ngx_str_t type = ngx_string("text/plain");  
+    ngx_str_t type = ngx_string("text/html");  
         ngx_str_t str_format = ngx_string("test_str=%V,test_flag=%i,test_num=%i,test_size=%z");  
         ngx_str_t test_str = elcf->arg_str;  
         ngx_flag_t test_flag = elcf->arg_flag;  
@@ -173,33 +172,33 @@ static ngx_int_t ngx_http_mytest2_handler(ngx_http_request_t *r)
 }  
   
 static void*  
-ngx_http_mytest2_create_loc_conf(ngx_conf_t *cf){  
-        ngx_http_mytest2_loc_conf_t *conf;  
-        conf = ngx_pcalloc(cf->pool,sizeof(ngx_http_mytest2_loc_conf_t));  
-        if(NULL == conf){  
+ngx_http_mytest1_create_loc_conf(ngx_conf_t *cf){  
+        ngx_http_mytest1_loc_conf_t *mycf;  
+        mycf = ngx_pcalloc(cf->pool,sizeof(ngx_http_mytest1_loc_conf_t));  
+        if(NULL == mycf){  
                 return NGX_CONF_ERROR;  
         }  
-        conf->arg_str.len = 0;  
-        conf->arg_str.data = NULL;  
+        mycf->arg_str.len = 0;  
+        mycf->arg_str.data = NULL;  
   
         //注意一下设定必不可少，否则会出错  
-        conf->arg_flag = NGX_CONF_UNSET;  
-        conf->arg_num = NGX_CONF_UNSET;  
-        conf->arg_str_array = NGX_CONF_UNSET_PTR;  
-        conf->arg_keyval = NULL;  
-        conf->arg_off = NGX_CONF_UNSET;  
-        conf->arg_msec = NGX_CONF_UNSET_MSEC;  
-        conf->arg_sec = NGX_CONF_UNSET;  
-        conf->arg_size = NGX_CONF_UNSET_SIZE;  
+        mycf->arg_flag = NGX_CONF_UNSET;  
+        mycf->arg_num = NGX_CONF_UNSET;  
+        mycf->arg_str_array = NGX_CONF_UNSET_PTR;  
+        mycf->arg_keyval = NULL;  
+        mycf->arg_off = NGX_CONF_UNSET;  
+        mycf->arg_msec = NGX_CONF_UNSET_MSEC;  
+        mycf->arg_sec = NGX_CONF_UNSET;  
+        mycf->arg_size = NGX_CONF_UNSET_SIZE;  
   
-        return conf;  
+        return mycf;  
 }  
   
   
 static char*  
-ngx_http_mytest2_merge_loc_conf(ngx_conf_t *cf,void *parent,void *child){  
-        ngx_http_mytest2_loc_conf_t *prev = parent;  
-        ngx_http_mytest2_loc_conf_t *conf = child;  
+ngx_http_mytest1_merge_loc_conf(ngx_conf_t *cf,void *parent,void *child){  
+        ngx_http_mytest1_loc_conf_t *prev = parent;  
+        ngx_http_mytest1_loc_conf_t *conf = child;  
         ngx_conf_merge_str_value(conf->arg_str,prev->arg_str,"");  
   
         return NGX_CONF_OK;  

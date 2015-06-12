@@ -69,7 +69,7 @@
             return rc;  
         }  
       
-        ngx_str_t type = ngx_string("text/plain");  
+        ngx_str_t type = ngx_string("text/html");  
         ngx_str_t response = ngx_string("Hello World");  
         r->headers_out.status = NGX_HTTP_OK;  
         r->headers_out.content_length_n = response.len;  
