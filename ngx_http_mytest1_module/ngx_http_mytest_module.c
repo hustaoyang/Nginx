@@ -1,5 +1,3 @@
-//Nginx自定义模块实现代码  
-//E-Mail:xiajunhust@gmail.com(江南烟雨)  
   
 #include <ngx_config.h>  
 #include <ngx_core.h>  
