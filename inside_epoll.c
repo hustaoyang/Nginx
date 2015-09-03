@@ -258,9 +258,16 @@ make_socket_non_blocking (int sfd)
                         {  
                           perror ("write");  
                           abort ();  
-                        }  
-                    }  
-      
+                        }
+                      
+                       //回射，将接受的内容写会到客户端 
+                      s = write (events[i].data.fd, buf, count);
+                      if (s == -1)  
+                      {  
+                          perror ("write");  
+                          abort ();  
+                      }  
+                    } 
                   if (done)  
                     {  
                       printf ("Closed connection on descriptor %d\n",  
